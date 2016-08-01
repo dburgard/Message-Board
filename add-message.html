@@ -9,7 +9,25 @@
         Add a message
       </h1>
     </section>
-    <script type="text/javascript" src="js/shared.js"></script>
-    <script type="text/javascript" src="js/add-message.js"></script>
+    <form onsubmit="return addMessage()">
+<label>Please leave a comment here:</label>
+<div class="inputField">
+<textarea name="commentText" id="commentText"></textarea>
+</div>
+<br>
+<label>Created by:</label>
+<div class="inputField">
+<input type="text" name="createdBy" id="createdBy">
+</div>
+<br>
+<label>Is this important?</label>
+<div class="inputField">
+Yes!<input type="checkbox" name="isImportant" id="isImportant">
+</div>
+<br>
+<input type="submit" value="Submit Form">
+</form>
+    <script type="text/javascript" src="./js/shared.js"></script>
+    <script type="text/javascript" src="./js/add-message.js"></script>
   </body>
 </html>

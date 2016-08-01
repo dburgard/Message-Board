@@ -10,6 +10,15 @@
         <button class="btn btn-primary pull-right" type="button">Refresh</button>
         <button class="btn btn-success pull-right" type="button" onclick="addMessage()">Add a message</button>
       </h1>
+          <h4>
+            <label>Show only important messages</label>
+                <input type="checkbox" id="importantCheckbox" onclick="showImportant()">
+            <label>Show messages created by</label>
+                <select id=nameDropdown onchange='showCreatedBy()'>
+                  <option>Show All</option>
+                </select>     
+          </h4>
+
       <section id="messagesContainer"></section>
     </section>
     <div id="loading">

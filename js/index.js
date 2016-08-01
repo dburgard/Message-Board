@@ -1,29 +1,157 @@
 function getAllMessages() {
   toggleSpinner(true);
-  // TODO: your solution goes here
+  
   var xhttp = new XMLHttpRequest();
 
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState === 4) {
       toggleSpinner(false);
       showMessages(xhttp.responseText);
+      }
     }
-  };
 
   xhttp.open('GET', apiEndpointBase, true);
   xhttp.send();
+  setImportant();
+  populateDropdown();
 }
+
+function populateDropdown() {
+  var dropdown = document.getElementById('nameDropdown');
+  var nameList = [];
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      nameList = JSON.parse(xhttp.responseText);
+    }
+    for (i=0; i < nameList.length; i++) {
+      var opt = document.createElement('option');
+      opt.value = nameList[i];
+      opt.innerHTML = nameList[i];
+      dropdown.appendChild(opt);
+    }
+  } 
+  xhttp.open('GET', populateDropdownEndpoint, true);
+  xhttp.send();
+} 
+
+function setImportant() {
+  var queryString = window.location.search;
+  var queryArray = queryString.split('&');
+  if (queryArray[1] == 'isImportant=true') {
+      document.getElementById('importantCheckbox').checked = true;
+      showImportant();
+  }
+  else if (queryArray[1] != 'isImportant=true') {
+      document.getElementById('importantCheckbox').checked = false;
+  } 
+}
+
+function setCreatedBy() {
+  var fullQueryString = window.location.search;
+  var fullQueryArray = fullQueryString.split('&');
+  var createdByString = fullQueryArray[2];
+  var createdByArray = createdByString.split('=');
+  var author = createdByArray[1];
+  var requestedArray = [];
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      requestedArray = JSON.parse(xhttp.responseText);
+    }
+    for (i=0; i < requestedArray.length; i++) {
+      if (requestedArray[i] == author) {
+        document.getElementById('nameDropdown').value = author;
+      }
+      else if (requestedArray[i] == "") {
+        window.location.href = "/";
+      }
+    }
+    showCreatedBy();
+    xhttp.open('GET', createdByEndpoint + author);
+    xhttp.send();
+  }
+}
+
 
 function addMessage() {
   window.location.href = '/add-message.html';
 }
 
 function editMessage(messageId) {
-  window.location.href = '/edit-message.html?messageId=' + messageId;
+  var check = document.getElementById('importantCheckbox').checked;
+  var author = document.getElementById('nameDropdown').value;
+  var pageRecall = '&isImportant=' + check + '&createdBy=' + author; 
+  window.location.href = '/edit-message.html?messageId=' + messageId + pageRecall;
 }
 
+
 function deleteMessage(messageId) {
-  // TODO: your solution does here
+  var result = confirm("Are you sure you want to delete this message?")
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+    window.location.href = '/';
+    }
+  }
+    
+  if (result === true) {
+    xhttp.open("DELETE", apiEndpointBase + '/' + messageId);
+    xhttp.send();
+    
+  } else {
+    window.location.href = '/';
+  }
+  return false;
+}
+
+function showImportant() {
+  var isChecked = document.getElementById('importantCheckbox').checked;
+  var author = document.getElementById('nameDropdown').value;
+  if(isChecked === true && author === "Show All") {
+     var xhttp = new XMLHttpRequest();
+     xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+          showMessages(xhttp.responseText)
+        }
+      };
+      xhttp.open("GET",importantCommentsEndpoint);
+      xhttp.send();
+  }
+  else if (author !== "Show All" && isChecked === true) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (xhttp.readyState == 4 && xhttp.status == 200) {
+        showMessages(xhttp.responseText)
+      }
+  }
+  xhttp.open ("GET", importantCommentsEndpoint + "/" + author);
+  xhttp.send();
+  }
+  else {
+         showCreatedBy();
+  } 
+}
+
+function showCreatedBy() {
+  var author = document.getElementById('nameDropdown').value;
+  var isChecked = document.getElementById('importantCheckbox').checked;
+  if (author !== "Show All" && isChecked === false) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (xhttp.readyState == 4 && xhttp.status == 200) {
+        showMessages(xhttp.responseText)
+      }  
+    }
+    xhttp.open("GET",createdByEndpoint + author)
+    xhttp.send();
+  }
+  else if (author !== "Show All" && isChecked === true) {
+    showImportant();
+  }
+  else {
+    window.location.href = "/"
+  }
 }
 
 function toggleSpinner(isVisible) {
@@ -40,7 +168,7 @@ function showMessages(messages) {
     if (a.updatedAt > b.updatedAt) {
       return -1;
     }
-    
+
     if (a.updatedAt < b.updatedAt) {
       return 1;
     }
@@ -59,7 +187,7 @@ function showMessages(messages) {
 
     // message header
     var messageHtml = '<p>' + message.createdBy +
-      (message.isImportant ? '&#160;<span class="label label-danger">IMPORTANT</span>' : '') + 
+      (message.isImportant ? '&#160;<span class="label label-danger">IMPORTANT</span>' : '') +
       '<button class="btn btn-danger pull-right" onclick="deleteMessage(' + message.id + ')"><i class="glyphicon glyphicon-trash"></i></button>' +
       '<button class="btn btn-primary pull-right" onclick="editMessage(' + message.id + ')"><i class="glyphicon glyphicon-pencil"></i></button>' +
     '</p>';
@@ -88,3 +216,4 @@ function showMessages(messages) {
 
 // This will make sure that all messages are loaded when page is loaded!
 getAllMessages();
+
