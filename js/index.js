@@ -16,7 +16,16 @@ function getAllMessages() {
   populateDropdown();
 }
 
+
+
 function populateDropdown() {
+  var fullQueryString = window.location.search;
+    if (fullQueryString !== "") {
+      var fullQueryArray = fullQueryString.split('&');
+      var createdByString = fullQueryArray[2];
+      var createdByArray = createdByString.split('=');
+      var author = createdByArray[1].replace("%20", " ");
+    } 
   var dropdown = document.getElementById('nameDropdown');
   var nameList = [];
   var xhttp = new XMLHttpRequest();
@@ -29,11 +38,19 @@ function populateDropdown() {
       opt.value = nameList[i];
       opt.innerHTML = nameList[i];
       dropdown.appendChild(opt);
+      if (author) {
+        if (opt.value == author) {
+        document.getElementById('nameDropdown').value = author;
+        showCreatedBy();
+        }
+      }  
     }
   } 
   xhttp.open('GET', populateDropdownEndpoint, true);
   xhttp.send();
 } 
+
+
 
 function setImportant() {
   var queryString = window.location.search;
@@ -47,31 +64,31 @@ function setImportant() {
   } 
 }
 
-function setCreatedBy() {
-  var fullQueryString = window.location.search;
-  var fullQueryArray = fullQueryString.split('&');
-  var createdByString = fullQueryArray[2];
-  var createdByArray = createdByString.split('=');
-  var author = createdByArray[1];
-  var requestedArray = [];
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (xhttp.readyState == 4 && xhttp.status == 200) {
+/*function setCreatedBy() {
+    var fullQueryString = window.location.search;
+    var fullQueryArray = fullQueryString.split('&');
+    var createdByString = fullQueryArray[2];
+    var createdByArray = createdByString.split('=');
+    var author = createdByArray[1];
+    var requestedArray = [];
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (xhttp.readyState == 4 && xhttp.status == 200) {
       requestedArray = JSON.parse(xhttp.responseText);
-    }
-    for (i=0; i < requestedArray.length; i++) {
-      if (requestedArray[i] == author) {
+      }
+      for (i=0; i < requestedArray.length; i++) {
+        if (requestedArray[i] == author) {
         document.getElementById('nameDropdown').value = author;
-      }
-      else if (requestedArray[i] == "") {
+        }
+        else if (requestedArray[i] == "") {
         window.location.href = "/";
+        }
       }
-    }
     showCreatedBy();
     xhttp.open('GET', createdByEndpoint + author);
     xhttp.send();
   }
-}
+}*/
 
 
 function addMessage() {
