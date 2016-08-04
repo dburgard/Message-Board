@@ -37,6 +37,10 @@
   margin-right: 5px;
 }
 
+#messagesTableBody tr .btn-primary {
+  margin-right: 5px;
+}
+
 #messagesContainer .message .date {
   font-style: italic;
   font-size: 12px;

@@ -27,7 +27,8 @@ function editMessage() {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState == 4 && xhttp.status == 200){
-      window.location.href = '/index.html?' + passBackQueryString;
+      backToFormat();
+      //window.location.href = '/index.html?' + passBackQueryString;
     };
 
   };
@@ -52,11 +53,20 @@ if (messageId) {
   }
 }
 
+
+function backToFormat() {
 var passBackQueryString; 
 //remove message id here
 var queryString = window.location.search;
 var queryArray = queryString.split('&');
+if (queryArray[1] !== 'table=true'){
 passBackQueryString = "&" + queryArray[1] + "&" + queryArray[2];
-
+window.location.href = 'index.html?' + passBackQueryString;
+}
+else {
+passBackQueryString = '&' + queryArray[2] + '&' + queryArray[3];
+window.location.href = 'index-with-table.html?' + passBackQueryString; 
+}
+}
 
 getMessage();

@@ -68,14 +68,16 @@ function setImportant() {
 function addMessage() {
   var check = document.getElementById('importantCheckbox').checked;
   var author = document.getElementById('nameDropdown').value;
-  var pageRecall = '&isImportant=' + check + '&createdBy=' + author; 
+  var format = '&table=true'
+  var pageRecall = format + '&isImportant=' + check + '&createdBy=' + author; 
   window.location.href = '/add-message.html' + '?' + pageRecall;
 }
 
 function editMessage(messageId) {
   var check = document.getElementById('importantCheckbox').checked;
   var author = document.getElementById('nameDropdown').value;
-  var pageRecall = '&isImportant=' + check + '&createdBy=' + author; 
+  var format = '&table=true';
+  var pageRecall = format + '&isImportant=' + check + '&createdBy=' + author; 
   window.location.href = '/edit-message.html?messageId=' + messageId + pageRecall;
 }
 
@@ -102,7 +104,8 @@ function deleteMessage(messageId) {
 function showImportant() {
   var isChecked = document.getElementById('importantCheckbox').checked;
   var author = document.getElementById('nameDropdown').value;
-  if(isChecked === true && author === "Show All") {
+  if(isChecked === true){
+    if(author === "Show All") {
      var xhttp = new XMLHttpRequest();
      xhttp.onreadystatechange = function() {
         if (xhttp.readyState == 4 && xhttp.status == 200) {
@@ -112,7 +115,7 @@ function showImportant() {
       xhttp.open("GET",importantCommentsEndpoint);
       xhttp.send();
   }
-  else if (author !== "Show All" && isChecked === true) {
+    else {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
       if (xhttp.readyState == 4 && xhttp.status == 200) {
@@ -122,10 +125,12 @@ function showImportant() {
   xhttp.open ("GET", importantCommentsEndpoint + "/" + author);
   xhttp.send();
   }
-  else {
-         showCreatedBy();
-  } 
+  }
+ else {
+   showCreatedBy();
+ } 
 }
+
 
 function showCreatedBy() {
   var author = document.getElementById('nameDropdown').value;
@@ -167,6 +172,7 @@ function showMessages(messages) {
 
   
   var messagesTableBody = document.getElementById('messagesTableBody');
+  messagesTableBody.innerHTML = ''; 
   
   messages.forEach(function(message) {
     var messageRow = messagesTableBody.insertRow(0);
@@ -199,6 +205,7 @@ function showMessages(messages) {
 
     tdDatetime.classList.add('date');
 
+    
     tdAction.innerHTML = '<button class="btn btn-danger pull-right" onclick="deleteMessage(' + message.id + ')"><i class="glyphicon glyphicon-trash"></i></button>' +
       '<button class="btn btn-primary pull-right" onclick="editMessage(' + message.id + ')"><i class="glyphicon glyphicon-pencil"></i></button>';
 
