@@ -85,7 +85,7 @@ function deleteMessage(messageId) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
-    window.location.href = '/';
+    window.location.href = '/index-with-table.html';
     }
   }
     
@@ -94,7 +94,7 @@ function deleteMessage(messageId) {
     xhttp.send();
     
   } else {
-    window.location.href = '/';
+    window.location.href = '/index-with-table.html';
   }
   return false;
 }
@@ -144,15 +144,16 @@ function showCreatedBy() {
     showImportant();
   }
   else {
-    window.location.href = "/"
+    window.location.href = "/index-with-table.html"
   }
 }
 
-function viewAsTable(){
-  var check = document.getElementById('importantCheckbox').checked;
-  var author = document.getElementById('nameDropdown').value;
-  var pageRecall = '&isImportant=' + check + '&createdBy=' + author; 
-  window.location.href = '/index-with-table.html' + '?' + pageRecall;
+function normalView(){
+var passBackQueryString; 
+var queryString = window.location.search;
+var queryArray = queryString.split('&');
+passBackQueryString = "&" + queryArray[1] + "&" + queryArray[2];
+window.location.href = "index.html?" + passBackQueryString;
 }
 
 function toggleSpinner(isVisible) {
@@ -164,47 +165,44 @@ function showMessages(messages) {
     messages = JSON.parse(messages);
   }
 
-  // reverse sort so last updated is first!
-  messages.sort(function(a, b) {
-    if (a.updatedAt > b.updatedAt) {
-      return -1;
-    }
-
-    if (a.updatedAt < b.updatedAt) {
-      return 1;
-    }
-
-    return 0;
-  });
-
-  var messagesContainer = document.getElementById('messagesContainer');
-  // clear the existing messages
-  messagesContainer.innerHTML = '';
-
+  
+  var messagesTableBody = document.getElementById('messagesTableBody');
+  
   messages.forEach(function(message) {
-    var messageDiv = document.createElement("div");
-    var messageTextDiv = document.createElement("div");
-    var messageDateDiv = document.createElement("p");
+    var messageRow = messagesTableBody.insertRow(0);
+    var tdName = messageRow.insertCell(0);
+    tdName.className = 'firstColumn';
+    var tdImportant = messageRow.insertCell(1);
+    tdImportant.className = 'secondColumn';
+    var tdMessage = messageRow.insertCell(2);
+    tdMessage.className = 'thirdColumn';
+    var tdDatetime = messageRow.insertCell(3);
+    tdDatetime.className = 'fourthColumn';
+    var tdAction = messageRow.insertCell(4);
+    tdAction.classname = 'fifthColumn';
 
-    // message header
-    var messageHtml = '<p>' + message.createdBy +
-      (message.isImportant ? '&#160;<span class="label label-danger">IMPORTANT</span>' : '') +
-      '<button class="btn btn-danger pull-right" onclick="deleteMessage(' + message.id + ')"><i class="glyphicon glyphicon-trash"></i></button>' +
-      '<button class="btn btn-primary pull-right" onclick="editMessage(' + message.id + ')"><i class="glyphicon glyphicon-pencil"></i></button>' +
-    '</p>';
+    tdName.innerHTML =  message.createdBy;
 
-    // message text
-    messageTextDiv.innerHTML = message.commentText;
+    tdImportant.innerHTML = (message.isImportant ? '&#160;<span class="label label-danger">IMPORTANT</span>' : ''); 
+      
+
+    tdMessage.innerHTML = message.commentText;
+
+    
 
     // message date
     if (message.createdAt === message.updatedAt) {
-      messageDateDiv.innerHTML = 'Created ' + moment(message.createdAt).fromNow();
+      tdDatetime.innerHTML = 'Created ' + moment(message.createdAt).fromNow();
     } else {
-      messageDateDiv.innerHTML = 'Last updated ' + moment(message.updatedAt).fromNow();
-    }
+      tdDatetime.innerHTML = 'Last updated ' + moment(message.updatedAt).fromNow();
+    };
 
-    messageDateDiv.classList.add('date');
+    tdDatetime.classList.add('date');
 
+    tdAction.innerHTML = '<button class="btn btn-danger pull-right" onclick="deleteMessage(' + message.id + ')"><i class="glyphicon glyphicon-trash"></i></button>' +
+      '<button class="btn btn-primary pull-right" onclick="editMessage(' + message.id + ')"><i class="glyphicon glyphicon-pencil"></i></button>';
+
+/****************************** Chachi's code!
     // update message div
     messageDiv.classList.add('message');
     messageDiv.innerHTML = messageHtml;
@@ -213,8 +211,9 @@ function showMessages(messages) {
 
     messagesContainer.appendChild(messageDiv);
   });
+*////////////////////////////////////////  
+});
 }
 
 // This will make sure that all messages are loaded when page is loaded!
 getAllMessages();
-

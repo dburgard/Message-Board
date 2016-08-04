@@ -42,3 +42,43 @@
   font-size: 12px;
   margin-top: 10px;
 }
+
+.changeFormat {
+  float: right;
+}
+
+#messagesTable {
+  width: 100%;
+}
+
+th {
+  border-bottom: 1px solid black;
+}
+
+td{
+  padding: 5px 5px 5px 0px;
+  border-bottom: 1px solid gray;
+}
+.firstColumn {
+  width: 10%;
+}
+
+.secondColumn {
+  width: 11%;
+  margin-right: 5px;
+}
+
+.thirdColumn {
+  width: 52%;
+}
+
+.fouthColumn {
+  width: 15%;
+  text-align: left;
+}
+
+.fifthColumn {
+  width: 8%;
+}
+
+

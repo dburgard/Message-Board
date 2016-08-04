@@ -18,13 +18,27 @@
                   <option>Show All</option>
                 </select> 
             <span class="changeFormat">     
-            <label>View as Table</label>
-            <input type=checkbox id='viewAsTable' onclick='viewAsTable()'>
+            <label>Normal View</label>
+            <input type=checkbox id='normalView' onclick='normalView()'>
             </span>  
           </p>
 
-      <section id="messagesContainer"></section>
-    </section>
+      <table id="messagesTable">
+          <thead>
+            <tr>
+              <th class='firstColumn'>Name</th>
+              <th class='secondColumn'></th>
+              <th class='thirddColumn'>Message</th>
+              <th class='fourthColumn'>Datetime</th>
+              <th class='fifthColumn'>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody id='messagesTableBody'>
+          </tbody>   
+
+      </table>
+    
     <div id="loading">
       <div class="loading-text">
         <img src="/img/spinner.svg" height="75">
@@ -33,6 +47,6 @@
     </div>
     <script type="text/javascript" src="js/moment.js"></script>
     <script type="text/javascript" src="js/shared.js"></script>
-    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript" src="js/index-with-table.js"></script>
   </body>
 </html>
